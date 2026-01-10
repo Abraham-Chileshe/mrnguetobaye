@@ -13,6 +13,7 @@ Route::get('/', function () {
     $gallery = Gallery::orderBy('created_at', 'desc')->take(9)->get();
     $videos = \App\Models\Video::orderBy('created_at', 'desc')->get();
     $coSchoolMedia = \App\Models\CoSchoolMedia::orderBy('created_at', 'desc')->get();
+    $certifications = \App\Models\Certification::orderBy('created_at', 'desc')->get();
     
     // Page Stats
     $total_blogs = Blog::where('is_published', true)->count();
@@ -23,7 +24,7 @@ Route::get('/', function () {
     $visitor_count = (int)$visitor_record->value + 1;
     $visitor_record->update(['value' => (string)$visitor_count]);
     
-    return view('home', compact('contents', 'blogs', 'gallery', 'videos', 'coSchoolMedia', 'total_blogs', 'total_gallery', 'visitor_count'));
+    return view('home', compact('contents', 'blogs', 'gallery', 'videos', 'coSchoolMedia', 'total_blogs', 'total_gallery', 'visitor_count', 'certifications'));
 })->name('home');
 
 Route::get('/gallery', [AdminController::class, 'indexGallery'])->name('gallery.index');
@@ -48,6 +49,10 @@ Route::middleware(['auth'])->group(function () {
     // CoSchool Management Routes
     Route::post('/admin/coschool', [App\Http\Controllers\AdminController::class, 'storeCoSchool'])->name('admin.coschool.store');
     Route::delete('/admin/coschool/{media}', [App\Http\Controllers\AdminController::class, 'destroyCoSchool'])->name('admin.coschool.destroy');
+    
+    // Certification Management Routes
+    Route::post('/admin/certifications', [App\Http\Controllers\AdminController::class, 'storeCertification'])->name('admin.certifications.store');
+    Route::delete('/admin/certifications/{certification}', [App\Http\Controllers\AdminController::class, 'destroyCertification'])->name('admin.certifications.destroy');
 });
 
 Route::get('/blog', [BlogController::class, 'indexFrontend'])->name('blogs.index');

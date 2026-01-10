@@ -246,6 +246,112 @@
     </div>
   </div>
   <!--  //About section -->
+
+  <!-- Certifications Section -->
+  @if(isset($certifications) && $certifications->count() > 0)
+  <section class="certifications-section py-5 bg-light" id="certifications">
+    <div class="container py-lg-5">
+      <div class="d-block mb-5 text-center">
+        <h3 class="global-title">Certifications</h3>
+        <p class="text-muted mt-2">Professional recognitions and qualifications.</p>
+      </div>
+
+      <style>
+        .cert-card {
+            border: none;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.08);
+            transition: all 0.4s ease;
+            background: #fff;
+            position: relative;
+            height: 100%;
+            padding: 15px; /* Add padding inside the card to frame the content */
+        }
+        .cert-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 25px 50px rgba(0,0,0,0.15);
+        }
+        .cert-img-wrapper {
+            height: 280px;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            border-radius: 15px; /* Round the image container too if preferred, or keep straight */
+            background-color: #fff; /* Ensure it matches card background */
+        }
+        .cert-img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+            transition: transform 0.5s ease;
+        }
+        .cert-card:hover .cert-img {
+            transform: scale(1.03);
+        }
+        .cert-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.3); /* Lighter overlay */
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 15px;
+        }
+        .cert-card:hover .cert-overlay {
+            opacity: 1;
+        }
+        .cert-zoom-icon {
+            color: #fff;
+            font-size: 2rem;
+            transform: scale(0.8);
+            transition: transform 0.3s ease;
+            background: rgba(255,255,255,0.2);
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            backdrop-filter: blur(5px);
+        }
+        .cert-card:hover .cert-zoom-icon {
+            transform: scale(1);
+        }
+      </style>
+
+      <div class="row">
+        @foreach($certifications as $cert)
+        <div class="col-lg-4 col-md-6 mb-4">
+            <div class="cert-card">
+                <a href="{{ asset($cert->image_path) }}" data-lightbox="certifications" data-title="{{ $cert->title }}">
+                    <div class="cert-img-wrapper">
+                        <img src="{{ asset($cert->image_path) }}" class="cert-img" alt="{{ $cert->title ?? 'Certification' }}">
+                        <div class="cert-overlay">
+                            <i class="fa fa-expand cert-zoom-icon"></i>
+                        </div>
+                    </div>
+                </a>
+                @if($cert->title)
+                <div class="pt-3 text-center">
+                    <h5 class="mb-0 font-weight-bold text-dark" style="font-size: 1.05rem;">{{ $cert->title }}</h5>
+                </div>
+                @endif
+            </div>
+        </div>
+        @endforeach
+      </div>
+    </div>
+  </section>
+  @endif
+  <!-- //Certifications Section -->
   
   <!-- Video Section -->
   @if(isset($videos) && $videos->count() > 0)

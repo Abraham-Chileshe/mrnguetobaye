@@ -13,7 +13,8 @@ class AdminController extends Controller
         $gallery = \App\Models\Gallery::all();
         $videos = \App\Models\Video::all();
         $coSchoolMedia = \App\Models\CoSchoolMedia::all();
-        return view('admin.dashboard', compact('contents', 'gallery', 'videos', 'coSchoolMedia'));
+        $certifications = \App\Models\Certification::orderBy('created_at', 'desc')->get();
+        return view('admin.dashboard', compact('contents', 'gallery', 'videos', 'coSchoolMedia', 'certifications'));
     }
 
     public function update(Request $request)
@@ -162,5 +163,32 @@ class AdminController extends Controller
         }
         $media->delete();
         return redirect()->back()->with('success', 'Meida removed successfully!');
+    }
+
+    public function storeCertification(Request $request)
+    {
+        $request->validate([
+            'image' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:5120',
+            'title' => 'nullable|string|max:255'
+        ]);
+
+        if ($request->hasFile('image')) {
+            $path = $request->file('image')->store('certifications', 'public');
+            \App\Models\Certification::create([
+                'image_path' => 'storage/' . $path,
+                'title' => $request->title
+            ]);
+        }
+
+        return redirect()->back()->with('success', 'Certification added successfully!');
+    }
+
+    public function destroyCertification(\App\Models\Certification $certification)
+    {
+        if ($certification->image_path) {
+            \Illuminate\Support\Facades\Storage::disk('public')->delete(str_replace('storage/', '', $certification->image_path));
+        }
+        $certification->delete();
+        return redirect()->back()->with('success', 'Certification removed successfully!');
     }
 }

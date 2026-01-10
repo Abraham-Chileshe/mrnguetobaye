@@ -40,6 +40,9 @@
                 <li class="nav-item">
                     <a class="nav-link" id="coschool-tab" data-toggle="tab" href="#coschool-mgmt" role="tab" aria-controls="coschool-mgmt" aria-selected="false">BRICS CoSchool</a>
                 </li>
+                <li class="nav-item">
+                    <a class="nav-link" id="certifications-tab" data-toggle="tab" href="#certifications-mgmt" role="tab" aria-controls="certifications-mgmt" aria-selected="false">Certifications</a>
+                </li>
             </ul>
         </div>
         <div class="card-body">
@@ -200,6 +203,12 @@
                     <div class="tab-pane fade" id="coschool-mgmt" role="tabpanel" aria-labelledby="coschool-tab">
                         <h5 class="mb-4 text-primary">BRICS CoSchool Media</h5>
                         <p class="text-muted">Upload photos and videos for the BRICS CoSchool section.</p>
+                    </div>
+
+                    <!-- Certifications Tab (Placeholder) -->
+                    <div class="tab-pane fade" id="certifications-mgmt" role="tabpanel" aria-labelledby="certifications-tab">
+                        <h5 class="mb-4 text-primary">Certifications Management</h5>
+                        <p class="text-muted">Upload and manage certificates displayed on the homepage.</p>
                     </div>
 
                     <!-- Social Links Tab -->
@@ -410,6 +419,58 @@
                         @endforelse
                     </div>
                 </div>
+                </div>
+            </div>
+
+            <!-- Separate Certifications Management UI -->
+            <div id="certifications-ui" style="display: none;">
+                <div class="mt-4 border-top pt-4">
+                    <form action="{{ route('admin.certifications.store') }}" method="POST" enctype="multipart/form-data" class="mb-5">
+                        @csrf
+                        <div class="row align-items-end">
+                            <div class="col-md-5">
+                                <div class="form-group mb-0">
+                                    <label class="font-weight-bold">Upload Certificate Image</label>
+                                    <input type="file" name="image" class="form-control-file" required>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group mb-0">
+                                    <label class="font-weight-bold">Title (Optional)</label>
+                                    <input type="text" name="title" class="form-control" placeholder="Certificate Title">
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <button type="submit" class="btn btn-success theme-button btn-block">Add Certificate</button>
+                            </div>
+                        </div>
+                    </form>
+
+                    <h6 class="font-weight-bold mb-3">Current Certifications</h6>
+                    <div class="row">
+                        @forelse($certifications ?? [] as $cert)
+                        <div class="col-md-3 mb-4">
+                            <div class="card h-100 shadow-sm border-0 bg-light">
+                                <div style="height: 200px; overflow: hidden; display: flex; align-items: center; justify-content: center; background: #fff;">
+                                    <img src="{{ asset($cert->image_path) }}" style="max-width: 100%; max-height: 100%; object-fit: contain;" alt="{{ $cert->title }}">
+                                </div>
+                                <div class="card-body p-2 d-flex justify-content-between align-items-center">
+                                    <small class="text-truncate mr-2">{{ $cert->title ?? 'Untitled' }}</small>
+                                    <form action="{{ route('admin.certifications.destroy', $cert->id) }}" method="POST" onsubmit="return confirm('Remove this certificate?')">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="btn btn-link text-danger p-0"><i class="fa fa-trash"></i></button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                        @empty
+                        <div class="col-12">
+                            <p class="text-muted italic">No certificates uploaded yet.</p>
+                        </div>
+                        @endforelse
+                    </div>
+                </div>
             </div>
 
             <script>
@@ -421,6 +482,8 @@
                     const galleryUi = document.getElementById('gallery-ui');
                     const videoUi = document.getElementById('video-ui');
                     const coschoolUi = document.getElementById('coschool-ui');
+                    const certificationsTab = document.getElementById('certifications-tab');
+                    const certificationsUi = document.getElementById('certifications-ui');
                     const mainFormActions = document.querySelector('form[action$="admin/update"] .mt-4.text-right');
 
                     function toggleGalleryUi() {
@@ -429,20 +492,29 @@
                             videoUi.style.display = 'none';
                             coschoolUi.style.display = 'none';
                             if (mainFormActions) mainFormActions.style.display = 'none';
+                        } else if (certificationsTab.classList.contains('active')) {
+                             certificationsUi.style.display = 'block';
+                             galleryUi.style.display = 'none';
+                             videoUi.style.display = 'none';
+                             coschoolUi.style.display = 'none';
+                             if (mainFormActions) mainFormActions.style.display = 'none';
                         } else if (videoTab.classList.contains('active')) {
                             videoUi.style.display = 'block';
                             galleryUi.style.display = 'none';
                             coschoolUi.style.display = 'none';
+                            certificationsUi.style.display = 'none';
                             if (mainFormActions) mainFormActions.style.display = 'none';
                         } else if (coschoolTab.classList.contains('active')) {
                             coschoolUi.style.display = 'block';
                             galleryUi.style.display = 'none';
                             videoUi.style.display = 'none';
+                            certificationsUi.style.display = 'none';
                             if (mainFormActions) mainFormActions.style.display = 'none';
                         } else {
                             galleryUi.style.display = 'none';
                             videoUi.style.display = 'none';
                             coschoolUi.style.display = 'none';
+                            certificationsUi.style.display = 'none';
                             if (mainFormActions) mainFormActions.style.display = 'block';
                         }
                     }
